@@ -13,6 +13,12 @@ var gameover , gameoverimage
 var clappingsound , footballshotsound,explosionsound
 
 
+var PLAY = 1;
+var END = 0;
+var gameState = "serve";
+
+
+
 function preload(){
   ballimage = loadImage("ball.png");
   car1image = loadImage("right car.png");
@@ -23,11 +29,13 @@ function preload(){
   bombimage = loadImage("bomb.png");
  gameoverimage = loadImage("game over.png")
  resetimage = loadImage("reset.png")
+
+
  footballshotsound = loadSound("Football shot.mp3");
 }
 function setup() {
   createCanvas(windowWidth,windowHeight);
-  bombGroup = new Group();
+  bombGroup =  new Group();
   //bomb =createSprite(400,400,50,50);
 //bomb.addImage(bombimage)
 gameover = createSprite(500,310,60,60)
@@ -82,6 +90,111 @@ boder8.shapeColor = "white"
 }
 
 function draw() {
+  
+
+  if (gameState==="PLAY"){
+
+    spawnbomb();
+    car1.velocityY = 0;
+    car1.velocityX = 0; 
+    
+    car2.velocityY = 0;
+    car2.velocityX = 0; 
+
+    
+
+   
+
+    if (ball.isTouching(car1)) {
+      footballshotsound.play();
+      //footballshotsound.setVolume(5);
+    }
+    if (ball.isTouching(car2)) {
+      footballshotsound.play();
+      //footballshotsound.setVolume(5);
+    }
+
+    if (keyIsDown(UP_ARROW)) {
+      car1.velocityY = -15 ;
+      car1.velocityX = 0 ;
+         
+     }
+     if (keyIsDown(DOWN_ARROW)) {
+      car1.velocityY = 15 ;
+      car1.velocityX = 0 ;
+         
+     }
+     if (keyIsDown(RIGHT_ARROW)) {
+      car1.velocityY = 0 ;
+      car1.velocityX = 15 ;
+         
+     }
+     if (keyIsDown(LEFT_ARROW)) {
+      car1.velocityY = 0 ;
+      car1.velocityX = -15 ;
+         
+     }
+     if (keyIsDown(87)) {
+      car2.velocityY = -15 ;
+      car2.velocityX = 0 ;
+         
+     }
+     if (keyIsDown(83)) {
+      car2.velocityY = 15 ;
+      car2.velocityX = 0 ;
+         
+     }
+     if (keyIsDown(68)) {
+      car2.velocityY = 0 ;
+      car2.velocityX = 15 ;
+         
+     }
+     if (keyIsDown(65)) {
+      car2.velocityY = 0 ;
+      car2.velocityX = -15 ;
+    }
+    
+ }
+ 
+ if (keyDown("space")) {
+  gameState ==="PLAY";
+     
+ } 
+
+ if (gameState===END){
+
+  if (bombGroup.isTouching(car1)) {
+    car1.destroy();
+    score1=score1+1
+    bombGroup.setVelocityYEach(0);
+    gameover.visible = true;
+    //gameover.lifetime = 300;
+    //bombGroup.visible = false;
+    bombGroup.destroyEach();
+    //bombGroup.lifetime = -10;
+       car2.velocityY = 0 ;
+       car2.velocityX = 0 ;
+       ball.velocityY = 0 ;
+       ball.velocityX = 0 ;
+   }
+   if (bombGroup.isTouching(car2)) {
+    car2.destroy();
+    score2=score2+1
+    bombGroup.setVelocityYEach(0);
+    gameover.visible = true;
+    //gameover.lifetime = 300;
+    //bombGroup.visible = false;
+    bombGroup.destroyEach();
+   //bombGroup.lifetime = -10;
+    car1.velocityY = 0 ;     
+    car1.velocityX = 0 ;
+    ball.velocityY = 0 ;
+    ball.velocityX = 0 ;
+
+   }
+
+ }
+  
  
   createEdgeSprites();
   ball.bounceOff(boder1);
@@ -124,33 +237,10 @@ function draw() {
   background(groundimage);
   
  
-  car1.velocityY = 0;
-  car1.velocityX = 0; 
-  
-  car2.velocityY = 0;
-  car2.velocityX = 0; 
+ 
   
  
-   if (keyIsDown(UP_ARROW)) {
-    car1.velocityY = -15 ;
-    car1.velocityX = 0 ;
-       
-   }
-   if (keyIsDown(DOWN_ARROW)) {
-    car1.velocityY = 15 ;
-    car1.velocityX = 0 ;
-       
-   }
-   if (keyIsDown(RIGHT_ARROW)) {
-    car1.velocityY = 0 ;
-    car1.velocityX = 15 ;
-       
-   }
-   if (keyIsDown(LEFT_ARROW)) {
-    car1.velocityY = 0 ;
-    car1.velocityX = -15 ;
-       
-   }
+  
 
    boder1.visible = false;
    boder2.visible = false;
@@ -160,20 +250,21 @@ function draw() {
    boder6.visible = false;
    boder7.visible = false;
    boder8.visible = false;
-
-  
-  
-    textSize(20);
-    fill(255);
-    text("USE KEY..W,S,A,D..TO MOVE LEFT CAR " ,width-970,100);
-  
-  
+if (gameState==="serve"){  
    textSize(20);
    fill(255);
-   text("USE ..ARROW KEYS..TO MOVE RIGHT CAR " ,width-480,100);
-
+   text("USE KEY..W,S,A,D..TO MOVE LEFT CAR " ,width-970,100);
+ 
+ 
+  textSize(20);
+  fill(255);
+  text("USE ..ARROW KEYS..TO MOVE RIGHT CAR " ,width-480,100);
   
-
+    
+  textSize(20);
+  fill(255);
+  text("PRESS..SPACE KEY..TO PLAY THE GAME",width-500,500);
+}
    textSize(20);
    fill(255);
    text("PLAYER1score: "+score2, width-200,20);
@@ -199,62 +290,11 @@ function draw() {
     goal1.depth = goal1.depth + 1;
 
 
-    if (keyIsDown(87)) {
-      car2.velocityY = -15 ;
-      car2.velocityX = 0 ;
-         
-     }
-     if (keyIsDown(83)) {
-      car2.velocityY = 15 ;
-      car2.velocityX = 0 ;
-         
-     }
-     if (keyIsDown(68)) {
-      car2.velocityY = 0 ;
-      car2.velocityX = 15 ;
-         
-     }
-     if (keyIsDown(65)) {
-      car2.velocityY = 0 ;
-      car2.velocityX = -15 ;
-         
-     }
+    
 
-     if (bombGroup.isTouching(car1)) {
-      car1.destroy();
-      score1=score1+1
-      bombGroup.setVelocityYEach(0);
-      gameover.visible = true;
-      //gameover.lifetime = 300;
-      //bombGroup.visible = false;
-     // bombGroup.destroyEach();
-      //bombGroup.lifetime = -10;
-         car2.velocityY = 0 ;
-         car2.velocityX = 0 ;
-         ball.velocityY = 0 ;
-         ball.velocityX = 0 ;
-     }
-     if (bombGroup.isTouching(car2)) {
-      car2.destroy();
-      score2=score2+1
-      bombGroup.setVelocityYEach(0);
-      gameover.visible = true;
-      //gameover.lifetime = 300;
-      //bombGroup.visible = false;
-      bombGroup.destroyEach();
-     //bombGroup.lifetime = -10;
-      car1.velocityY = 0 ;     
-      car1.velocityX = 0 ;
-      ball.velocityY = 0 ;
-      ball.velocityX = 0 ;
-
-     }
-     if (car1.isTouching(ball)) {
-      footballshotsound.play();
-      //footballshotsound.setVolume(5);
-    }
-
-     spawnbomb();
+    
+    
+     
      
    
    if(mousePressedOver(reset)) {
